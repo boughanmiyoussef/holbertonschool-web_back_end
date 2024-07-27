@@ -1,7 +1,6 @@
 import signUpUser from './4-user-promise';
 import uploadPhoto from './5-photo-reject';
 
-
 export default function handleProfileSignup(firstName, lastName, fileName) {
   const userPromise = signUpUser(firstName, lastName).then((value) => ({
     status: 'fulfilled',
@@ -12,5 +11,6 @@ export default function handleProfileSignup(firstName, lastName, fileName) {
     status: 'rejected',
     value: error.toString(),
   }));
+
   return Promise.all([userPromise, photoPromise]);
 }
