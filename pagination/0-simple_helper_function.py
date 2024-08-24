@@ -3,7 +3,6 @@
 Main file
 """
 
-
 def index_range(page, page_size):
     """result"""
     start_index = (page - 1) * page_size
