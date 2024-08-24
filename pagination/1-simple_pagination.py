@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Simple pagination
+Main file
 """
 
 
@@ -9,16 +9,7 @@ import math
 from typing import List
 
 
-def index_range(page, page_size) -> tuple:
-    """
-    The function should return a tuple of size two containing
-    a start index and anend index corresponding to the range of
-    indexes to return in a list for those particular pagination
-    parameters.
-    """
-    start = (page - 1) * page_size
-    end = start + page_size
-    return (start, end)
+index_range = __import__('0-simple_helper_function').index_range
 
 
 class Server:
@@ -41,17 +32,15 @@ class Server:
         return self.__dataset
 
     def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
-        """Return a page of the dataset."""
-
+        """result"""
         assert isinstance(page, int) and page > 0
         assert isinstance(page_size, int) and page_size > 0
 
-        start, end = index_range(page, page_size)
+        data = []
+        with open('Popular_Baby_Names.csv', newline='') as csvfile:
+            reader = csv.reader(csvfile)
+            for row in reader:
+                data.append(row)
 
-        dataset = self.dataset()
-
-        if start >= len(dataset):
-            return []
-
-        return dataset[start:end]
-    
+        start_index, end_index = index_range(page, page_size)
+        return data[start_index:end_index]
