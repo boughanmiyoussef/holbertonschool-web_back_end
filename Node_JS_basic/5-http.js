@@ -1,36 +1,25 @@
 const http = require('http');
 
-const args = process.argv.slice(2);
-const countStudents = require('./3-read_file_async');
-
-const DATABASE = args[0];
-
 const hostname = '127.0.0.1';
 const port = 1245;
+const countStudents = require('./3-read_file_async');
 
-const app = http.createServer(async (req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
+const filePath = process.argv[2];
 
-  const { url } = req;
+const promise = countStudents(filePath);
 
-  if (url === '/') {
-    res.write('Hello Holberton School!');
-  } else if (url === '/students') {
-    res.write('This is the list of our students\n');
-    try {
-      const students = await countStudents(DATABASE);
-      res.end(`${students.join('\n')}`);
-    } catch (error) {
-      res.end(error.message);
-    }
+const app = http.createServer((req, res) => {
+  if (req.url === '/students') {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/plain');
+    promise.then((data) => {
+      res.end(`This is the list of our students\n${data}`);
+    }).catch(() => { res.end('This is the list of our students\nCannot load the database'); });
+  } else if (req.url === '/') {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('Hello Holberton School!');
   }
-  res.statusCode = 404;
-  res.end();
 });
 
-app.listen(port, hostname, () => {
-  //   console.log(`Server running at http://${hostname}:${port}/`);
-});
-
-module.exports = app;
+module.exports = app.listen(port, hostname);
